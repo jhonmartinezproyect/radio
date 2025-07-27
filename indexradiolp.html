@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Radio Potosí Online</title>
+  <meta name="description" content="Radio Potosí Online, tu emisora favorita de Bolivia transmitiendo en vivo las 24 horas." />
+  <meta name="keywords" content="Radio Potosí, radio online, Bolivia, música, noticias, programación, clima" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    /* Variables y colores */
+    :root {
+      --bg-dark: #0f0f0f;
+      --text-dark: #ffffff;
+      --bg-light: #f4f4f4;
+      --text-light: #222222;
+      --highlight: #ff007f;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Fondo general */
+    .background-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: linear-gradient(135deg, #ff007f 0%, #4a007f 100%);
+      
+         background-image: url('https://static.vecteezy.com/system/resources/previews/004/092/967/non_2x/background-of-radio-day-frequency-free-vector.jpg');
+         background-size: cover;
+         background-position: center;
+      */
+      filter: brightness(0.85);
+    }
+
+    /* Logo radio */
+    .logo-radio {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0;
+    }
+    .logo-radio img {
+      max-width: 180px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.7);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .logo-radio img:hover,
+    .logo-radio img:focus {
+      transform: scale(1.05);
+      outline: none;
+      box-shadow: 0 0 25px rgba(255, 0, 127, 1);
+    }
+
+    /* Resto del código (igual al que tienes) */
+    header {
+      background: #000;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      color: var(--highlight);
+      margin: 0;
+      font-size: 24px;
+    }
+    .menu {
+      display: flex;
+      gap: 20px;
+    }
+    .menu a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .menu a:hover,
+    .menu a:focus {
+      text-decoration: underline;
+    }
+   .hero {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: transparent; /* Sin fondo en modo normal */
+  text-align: center;
+  padding: 0 20px; 
+  box-sizing: border-box;
+}
+
+.hero h2 {
+  font-size: 40px;
+  margin: 0;
+  color: var(--highlight);
+}
+
+.play-btn {
+  margin-top: 20px;
+  font-size: 50px;
+  color: var(--highlight);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.play-btn:hover,
+.play-btn:focus {
+  color: #ff3399;
+}
+
+/* Modo claro: fondo transparente y altura automática para evitar barra blanca */
+body.light-mode .hero {
+  height: auto;
+  background-color: transparent;
+  padding: 40px 20px; /* para que mantenga espacio vertical y lateral */
+  justify-content: center; /* sigue centrado vertical */
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+    .play-btn {
+      margin-top: 20px;
+      font-size: 50px;
+      color: var(--highlight);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .play-btn:hover,
+    .play-btn:focus {
+      color: #ff3399;
+    }
+    .play-btn[role="button"] {
+      outline-offset: 4px;
+    }
+    .audio-wrapper {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+    #volumeControl {
+      width: 250px;
+      margin-top: 10px;
+      accent-color: var(--highlight);
+      vertical-align: middle;
+    }
+    #muteBtn {
+      cursor: pointer;
+      color: var(--highlight);
+      font-size: 24px;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 1000;
+      max-width: 90%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .popup.show {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .popup .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--highlight);
+    }
+    .popup .close:hover,
+    .popup .close:focus {
+      color: #ff3399;
+    }
+    .popup h2 {
+      margin-top: 0;
+    }
+    .weather-section {
+      background: #111;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+    .weather-card {
+      background: linear-gradient(135deg, #222 0%, #111 100%);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+    .weather-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(255, 0, 127, 0.6);
+    }
+    .weather-card h4 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .weather-card img {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 2px rgba(255, 0, 127, 0.7));
+    }
+    .weather-desc {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: capitalize;
+    }
+    .weather-temp {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--highlight);
+    }
+    /* Focus outline for accessibility */
+    a:focus,
+    button:focus,
+    .play-btn:focus,
+    #muteBtn:focus {
+      outline: 3px solid var(--highlight);
+      outline-offset: 2px;
+    }
+    /* Botón modo claro/oscuro simple */
+   #themeToggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: var(--highlight);
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(255, 0, 127, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  z-index: 10000;
+}
+#themeToggle:hover,
+#themeToggle:focus {
+  background-color: #e60073;
+  outline: none;
+  transform: scale(1.1);
+}
+    body.light-mode {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+    body.light-mode header {
+      background-color: #eee;
+    }
+    body.light-mode header h1 {
+      color: var(--highlight);
+    }
+    body.light-mode .menu a {
+      color: var(--text-light);
+    }
+    body.light-mode .hero {
+      background-color: #ddd;
+    }
+    body.light-mode .play-btn {
+      color: var(--highlight);
+    }
+    body.light-mode .audio-wrapper {
+      color: var(--text-light);
+    }
+    body.light-mode .popup {
+      background: #eee;
+      color: #222;
+    }
+    body.light-mode .weather-section {
+      background: #eee;
+    }
+    body.light-mode .weather-card {
+      background: linear-gradient(135deg, #ddd 0%, #bbb 100%);
+      color: #222;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    /* top-bar */
+    .top-bar {
+      background: #000;
+      color: var(--highlight);
+      padding: 5px 0;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      user-select: none;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .top-bar marquee {
+      color: var(--highlight);
+    }
+    /* now-playing */
+    .now-playing {
+      display: flex;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 20px;
+      gap: 20px;
+      color: white;
+      border-radius: 10px;
+      margin: 20px;
+    }
+    body.light-mode .now-playing {
+      background: #ddd;
+      color: #222;
+    }
+    .now-playing img {
+      width: 80px;
+      border-radius: 10px;
+    }
+    .now-playing .info h3 {
+      margin: 0 0 6px 0;
+      font-weight: 700;
+    }
+    .now-playing .info p {
+      margin: 2px 0;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <marquee>
+  🎵ESTAMOS AL AIRE CON LA MEJOR PROGRMACION PARA TI
+  </marquee>
+</div>
+
+<header>
+  <h1><i class="fas fa-broadcast-tower"></i> Radio Potosí</h1>
+  <nav class="menu" role="navigation" aria-label="Menú principal">
+    <a href="#" data-popup="inicio">Inicio</a>
+    <a href="#" data-popup="programacion">Programación</a>
+    <a href="#" data-popup="contacto">Contacto</a>
+    <a href="#" data-popup="youtube">🔴 En Vivo (YouTube)</a>
+  </nav>
+</header>
+
+<!-- Nueva sección para fondo -->
+<div class="background-section" aria-hidden="true"></div>
+
+<!-- Nueva sección para logo radio -->
+<div class="logo-radio">
+  <img src="https://st4.depositphotos.com/1024345/39496/v/450/depositphotos_394960768-stock-illustration-vector-illustration-button-online-radio.jpg" alt="Logo de Radio Potosí" tabindex="0" />
+</div>
+
+<section class="hero">
+  <h2>RADIO CITY ONE</h2>
+  <div class="play-btn" role="button" tabindex="10" aria-label="Reproducir o pausar radio" id="playBtn">
+    <i class="fas fa-play-circle" aria-hidden="true"></i> <span id="playText" class="sr-only">Reproducir</span>
+  </div>
+  <div class="audio-wrapper" id="audioWrapper" aria-live="polite" aria-atomic="true">
+    <audio id="radio" preload="none" crossorigin="anonymous">
+      <source src="http://cdn.instream.audio:9288/stream" type="audio/mpeg" />
+      Tu navegador no soporta audio en streaming.
+    </audio>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" aria-label="Control de volumen" />
+    <i id="muteBtn" class="fas fa-volume-up" role="button" tabindex="0" aria-label="Silenciar audio"></i>
+    <div id="audioError" style="color: #ff007f; margin-top: 10px; display:none;" role="alert" aria-live="assertive"></div>
+  </div>
+</section>
+
+<section class="now-playing" aria-live="polite" aria-atomic="true" id="nowPlaying">
+  <img src="https://w7.pngwing.com/pngs/223/119/png-transparent-podcast-internet-radio-broadcasting-talk-radio-radio-station-television-electronics-microphone-thumbnail.png" alt="DJ Ross" />
+  <div class="info">
+    <h3>Club Night</h3>
+    <p>Ahora al aire con DJ Ross</p>
+    <p>2:30 AM - 6:00 AM</p>
+  </div>
+</section>
+
+<section class="weather-section" id="weather" aria-live="polite" aria-atomic="true">
+  <p>Cargando clima en vivo...</p>
+</section>
+
+<!-- Ventanas Emergentes -->
+<div class="popup" id="popup-inicio" role="dialog" aria-modal="true" aria-labelledby="popup-inicio-title" tabindex="-1">
+  <span class="close" role="button" tabindex="0" aria-label="Cerrar ventana" data-close="inicio">&times;</span>
+  <h2 id="popup-inicio-title">Bienvenido a Radio Potosí</h2>
+  <p>Tu emisora favorita de Bolivia transmitiendo en vivo las 24 horas.</p>
+</div>
+<div class="popup" id="popup-programacion" role="dialog" aria-modal="true" aria-labelledby="popup-programacion-title" tabindex="-1">
+  <span class="close" role="button" tabindex="0" aria-label="Cerrar ventana" data-close="programacion">&times;</span>
+  <h2 id="popup-programacion-title">Programación</h2>
+  <ul>
+    <li>6:00 AM - Noticias</li>
+    <li>8:00 AM - Música Variada</li>
+    <li>10:00 AM - Entrevistas</li>
+    <li>12:00 PM - Programas en Vivo</li>
+  </ul>
+</div>
+<div class="popup" id="popup-contacto" role="dialog" aria-modal="true" aria-labelledby="popup-contacto-title" tabindex="-1">
+  <span class="close" role="button" tabindex="0" aria-label="Cerrar ventana" data-close="contacto">&times;</span>
+  <h2 id="popup-contacto-title">Contacto</h2>
+  <p>Email: contacto@radiopotosi.bo</p>
+  <p>Teléfono: +591 2 1234567</p>
+</div>
+<div class="popup" id="popup-youtube" role="dialog" aria-modal="true" aria-labelledby="popup-youtube-title" tabindex="-1">
+  <span class="close" role="button" tabindex="0" aria-label="Cerrar ventana" data-close="youtube">&times;</span>
+  <h2 id="popup-youtube-title">Transmisión en Vivo desde YouTube</h2>
+  <iframe width="100%" height="315" src="https://www.youtube.com/embed/Hj-BxGEMEhQ" title="En Vivo" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<button id="themeToggle" aria-pressed="false" aria-label="Cambiar modo claro y oscuro">☀️</button>
+
+<script>
+  // Audio controls
+  const audioWrapper = document.getElementById('audioWrapper');
+  const audio = document.getElementById('radio');
+  const playBtn = document.getElementById('playBtn');
+  const playIcon = playBtn.querySelector('i');
+  const playText = document.getElementById('playText');
+  const volumeSlider = document.getElementById('volumeControl');
+  const muteBtn = document.getElementById('muteBtn');
+  const audioError = document.getElementById('audioError');
+
+  let isPlaying = false;
+  let isMuted = false;
+
+  function updatePlayButton() {
+    if (isPlaying) {
+      playIcon.classList.remove('fa-play-circle');
+      playIcon.classList.add('fa-pause-circle');
+      playText.textContent = 'Pausar';
+    } else {
+      playIcon.classList.remove('fa-pause-circle');
+      playIcon.classList.add('fa-play-circle');
+      playText.textContent = 'Reproducir';
+    }
+  }
+
+  function toggleAudio() {
+    if (isPlaying) {
+      audio.pause();
+      audioWrapper.style.display = 'none';
+      isPlaying = false;
+    } else {
+      audioWrapper.style.display = 'block';
+      audio.play().catch(() => {
+        audioError.style.display = 'block';
+        audioError.textContent = 'No se pudo reproducir el audio. Por favor, intenta más tarde.';
+      });
+      audioError.style.display = 'none';
+      isPlaying = true;
+    }
+    updatePlayButton();
+  }
+
+  playBtn.addEventListener('click', toggleAudio);
+  playBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleAudio();
+    }
+  });
+
+  volumeSlider.addEventListener('input', () => {
+    audio.volume = volumeSlider.value;
+    if (audio.volume === 0) {
+      isMuted = true;
+      muteBtn.classList.remove('fa-volume-up');
+      muteBtn.classList.add('fa-volume-mute');
+      muteBtn.setAttribute('aria-label', 'Activar sonido');
+    } else {
+      isMuted = false;
+      muteBtn.classList.remove('fa-volume-mute');
+      muteBtn.classList.add('fa-volume-up');
+      muteBtn.setAttribute('aria-label', 'Silenciar audio');
+    }
+  });
+
+  function toggleMute() {
+    if (isMuted) {
+      audio.volume = volumeSlider.value || 1;
+      muteBtn.classList.remove('fa-volume-mute');
+      muteBtn.classList.add('fa-volume-up');
+      muteBtn.setAttribute('aria-label', 'Silenciar audio');
+      isMuted = false;
+    } else {
+      audio.volume = 0;
+      muteBtn.classList.remove('fa-volume-up');
+      muteBtn.classList.add('fa-volume-mute');
+      muteBtn.setAttribute('aria-label', 'Activar sonido');
+      isMuted = true;
+    }
+  }
+
+  muteBtn.addEventListener('click', toggleMute);
+  muteBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMute();
+    }
+  });
+
+  // Popups
+  const menuLinks = document.querySelectorAll('nav.menu a[data-popup]');
+  const popups = document.querySelectorAll('.popup');
+  const closeButtons = document.querySelectorAll('.popup .close');
+
+  menuLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const popupId = `popup-${link.dataset.popup}`;
+      popups.forEach(p => p.classList.remove('show'));
+      const targetPopup = document.getElementById(popupId);
+      if (targetPopup) {
+        targetPopup.classList.add('show');
+        targetPopup.focus();
+      }
+    });
+  });
+
+  closeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.parentElement.classList.remove('show');
+    });
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.parentElement.classList.remove('show');
+      }
+    });
+  });
+
+  // Cerrar popups con Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      popups.forEach(p => p.classList.remove('show'));
+    }
+  });
+
+  // Clima
+  const departamentos = [
+    { nombre: "La Paz", lat: -16.5, lon: -68.15 },
+    { nombre: "Cochabamba", lat: -17.38, lon: -66.15 },
+    { nombre: "Santa Cruz", lat: -17.8, lon: -63.17 },
+    { nombre: "Oruro", lat: -17.98, lon: -67.13 },
+    { nombre: "Potosí", lat: -19.58, lon: -65.75 },
+    { nombre: "Tarija", lat: -21.53, lon: -64.73 },
+    { nombre: "Beni", lat: -14.83, lon: -64.9 },
+    { nombre: "Pando", lat: -11.03, lon: -68.77 },
+    { nombre: "Chuquisaca", lat: -19.03, lon: -65.26 }
+  ];
+  const apiKey = "463672140b71fd7b8ba969a6ecd5731f";
+  const container = document.getElementById("weather");
+
+  async function obtenerClima() {
+    container.innerHTML = "";
+    for (const dpto of departamentos) {
+      try {
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${dpto.lat}&lon=${dpto.lon}&appid=${apiKey}&units=metric&lang=es`);
+        const data = await res.json();
+        const icono = data.weather[0].icon;
+        const desc = data.weather[0].description;
+        const temp = data.main.temp;
+        const card = document.createElement("div");
+        card.className = "weather-card";
+        card.innerHTML = `
+          <h4>${dpto.nombre}</h4>
+          <img src="https://openweathermap.org/img/wn/${icono}@4x.png" alt="${desc}" />
+          <div class="weather-desc">${desc}</div>
+          <div class="weather-temp">${temp.toFixed(1)}°C</div>
+        `;
+        container.appendChild(card);
+      } catch {
+        const fallback = document.createElement("div");
+        fallback.className = "weather-card";
+        fallback.innerHTML = `<h4>${dpto.nombre}</h4><p>No disponible</p>`;
+        container.appendChild(fallback);
+      }
+    }
+  }
+  obtenerClima();
+  setInterval(obtenerClima, 600000);
+
+  // Botón modo claro/oscuro simple
+  const themeToggle = document.getElementById('themeToggle');
+
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  themeToggle.textContent = isLight ? '☀️' : '🌙';
+  themeToggle.setAttribute('aria-pressed', isLight.toString());
+});
+</script>
+
+</body>
+</html>
